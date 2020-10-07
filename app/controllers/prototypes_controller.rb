@@ -8,7 +8,7 @@ class PrototypesController < ApplicationController
     @prototype = Prototype.new
   end
   def create
-    @prototype = Prototype.create(prototype_params)
+    @prototype = Prototype.new(prototype_params)
     if @prototype.save
       redirect_to root_path
     else
@@ -21,10 +21,10 @@ class PrototypesController < ApplicationController
     @comments = @prototype.comments.includes(:user)
   end
   def edit
-    unless user_signed_in?
+    @prototype = Prototype.find(params[:id])
+    unless current_user.id == @prototype.user.id
       redirect_to action: :index
     end
-    @prototype = Prototype.find(params[:id])
   end
   def update
     prototype = Prototype.find(params[:id])
@@ -45,5 +45,6 @@ class PrototypesController < ApplicationController
   def prototype_params
     params.require(:prototype).permit(:title, :catch_copy, :concept, :image).merge(user_id: current_user.id)
   end
+
 end
 
